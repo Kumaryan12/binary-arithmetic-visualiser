@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restoring Division Visualizer</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .division-container {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 25px;
+      border-radius: 16px;
+      width: 85%;
+      max-width: 900px;
+      margin: 30px auto;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      color: #38bdf8;
+      margin-bottom: 10px;
+    }
+
+    .inputs {
+      margin: 20px 0;
+    }
+
+    input {
+      width: 100px;
+      padding: 6px;
+      text-align: center;
+      border: none;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #000;
+      margin-right: 10px;
+    }
+
+    button {
+      background: #38bdf8;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      color: #0f172a;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .registers {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .register {
+      background: #1e293b;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(56,189,248,0.3);
+      text-align: center;
+    }
+
+    .register h4 {
+      margin: 0;
+      color: #38bdf8;
+    }
+
+    .bits {
+      display: flex;
+      gap: 4px;
+      margin-top: 5px;
+    }
+
+    .bit {
+      width: 24px;
+      height: 24px;
+      background: #334155;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .highlight {
+      background: #0ea5e9 !important;
+      color: #0f172a;
+    }
+
+    .explanation {
+      background: rgba(148,163,184,0.15);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      color: #e2e8f0;
+      font-size: 1.05em;
+      line-height: 1.6;
+    }
+
+    .output {
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 1.1em;
+      color: #f8fafc;
+    }
+
+    .footer-buttons {
+      margin-top: 30px;
+    }
+
+    a.back {
+      display: inline-block;
+      text-decoration: none;
+      color: #38bdf8;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVIGATION BAR -->
+
+
+  <div class="division-container">
+    <h2>Restoring Division Algorithm – Step-by-Step Visualizer</h2>
+
+    <div class="inputs">
+      <input type="number" id="dividend" placeholder="Dividend (Q)">
+      <input type="number" id="divisor" placeholder="Divisor (M)">
+      <button onclick="startRestoring()">Start</button>
+    </div>
+
+    <div class="registers">
+      <div class="register">
+        <h4>AC</h4>
+        <div id="ac-bits" class="bits"></div>
+      </div>
+      <div class="register">
+        <h4>Q</h4>
+        <div id="q-bits" class="bits"></div>
+      </div>
+      <div class="register">
+        <h4>M</h4>
+        <div id="m-bits" class="bits"></div>
+      </div>
+    </div>
+<summary>📘 Theory: Restoring Division Algorithm</summary>
+<p>
+The Restoring Division Algorithm performs binary division by restoring the value of AC whenever the subtraction result becomes negative.
+</p>
+<ol>
+  <li>Shift left (AC, Q).</li>
+  <li>Subtract divisor (M) from AC.</li>
+  <li>If AC &lt; 0 → Restore AC (add back M) and set Q₀ = 0.</li>
+  <li>Else → Keep AC and set Q₀ = 1.</li>
+  <li>Repeat for all bits of Q.</li>
+</ol>
+<p><b>Result:</b> Quotient is stored in Q, remainder in AC.</p>
+
+    <div class="explanation" id="explanation">Enter values and click <b>Start</b> to begin.</div>
+
+    <div class="footer-buttons">
+      <button id="next-btn" onclick="nextStep()" disabled>Next Step ▶️</button>
+      <button id="reset-btn" onclick="resetRestoring()" disabled>Reset 🔄</button>
+    </div>
+
+    <div class="output" id="result"></div>
+    <a class="back" href="index.html">🏠 Back to Home</a>
+  </div>
+
+  <script>
+    let steps = [];
+    let currentStep = 0;
+    let n, M, Q, AC;
+
+    function toBinary(num, bits) {
+      if (num < 0) num = (1 << bits) + num;
+      return num.toString(2).padStart(bits, '0');
+    }
+
+    function twosComplement(bin) {
+      let inverted = bin.split('').map(b => b === '0' ? '1' : '0').join('');
+      let addOne = (parseInt(inverted, 2) + 1).toString(2).padStart(bin.length, '0');
+      return addOne.slice(-bin.length);
+    }
+
+    function startRestoring() {
+      const dividend = parseInt(document.getElementById('dividend').value);
+      const divisor = parseInt(document.getElementById('divisor').value);
+      if (isNaN(dividend) || isNaN(divisor) || divisor === 0) {
+        alert("Please enter valid numbers (divisor ≠ 0).");
+        return;
+      }
+
+      n = 5;
+      Q = toBinary(dividend, n);
+      M = toBinary(divisor, n);
+      AC = '0'.repeat(n);
+
+      steps = [];
+      let tempAC = AC, tempQ = Q, count = n;
+
+      while (count > 0) {
+        // Step 1: Shift left (AC,Q)
+        let combined = (tempAC + tempQ).slice(1) + '0';
+        tempAC = combined.slice(0, n);
+        tempQ = combined.slice(n, 2 * n);
+
+        // Step 2: AC = AC - M
+        let tempACdec = (parseInt(tempAC, 2) - parseInt(M, 2));
+        let explain = `Shift left (AC,Q). Subtract M from AC. `;
+        let operation = 'AC = AC - M';
+
+        if (tempACdec < 0) {
+          // Step 3: Restore AC and set Q0 = 0
+          tempACdec = tempACdec + (1 << n);
+          tempQ = tempQ.slice(0, -1) + '0';
+          explain += `AC < 0 → Restore AC and set Q₀ = 0.`;
+          operation += ' → Restored';
+        } else {
+          // Step 4: Keep AC and set Q0 = 1
+          tempQ = tempQ.slice(0, -1) + '1';
+          explain += `AC ≥ 0 → Keep AC and set Q₀ = 1.`;
+        }
+
+        tempAC = (tempACdec & ((1 << n) - 1)).toString(2).padStart(n, '0');
+
+        steps.push({
+          step: n - count + 1,
+          AC: tempAC,
+          Q: tempQ,
+          operation,
+          explain
+        });
+
+        count--;
+      }
+
+      currentStep = 0;
+      document.getElementById('next-btn').disabled = false;
+      document.getElementById('reset-btn').disabled = false;
+      updateRegisters(AC, Q, M);
+      document.getElementById('explanation').innerHTML = 'Ready! Click <b>Next Step ▶️</b> to proceed.';
+    }
+
+    function nextStep() {
+      if (currentStep >= steps.length) {
+        const final = steps[steps.length - 1];
+        const quotient = parseInt(final.Q, 2);
+        const remainder = parseInt(final.AC, 2);
+        document.getElementById('result').innerHTML =
+          `<strong>Quotient:</strong> ${quotient} (Binary: ${final.Q})<br>
+           <strong>Remainder:</strong> ${remainder} (Binary: ${final.AC})`;
+        document.getElementById('next-btn').disabled = true;
+        return;
+      }
+
+      let s = steps[currentStep];
+      updateRegisters(s.AC, s.Q, M);
+      document.getElementById('explanation').innerHTML =
+        `<b>Step ${s.step}:</b> ${s.explain}<br><i>${s.operation}</i>`;
+      currentStep++;
+    }
+
+    function resetRestoring() {
+      steps = [];
+      currentStep = 0;
+      document.getElementById('explanation').innerHTML = 'Enter values and click <b>Start</b> to begin.';
+      document.getElementById('ac-bits').innerHTML = '';
+      document.getElementById('q-bits').innerHTML = '';
+      document.getElementById('m-bits').innerHTML = '';
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('next-btn').disabled = true;
+      document.getElementById('reset-btn').disabled = true;
+    }
+
+    function updateRegisters(ac, q, m) {
+      renderBits('ac-bits', ac);
+      renderBits('q-bits', q);
+      renderBits('m-bits', m);
+    }
+
+    function renderBits(id, bits) {
+      const container = document.getElementById(id);
+      container.innerHTML = '';
+      bits.split('').forEach(b => {
+        const div = document.createElement('div');
+        div.classList.add('bit');
+        div.textContent = b;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

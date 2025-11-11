@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Booth’s Algorithm Visualizer</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Extra styling for this page */
+    .booth-container {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 25px;
+      border-radius: 16px;
+      width: 85%;
+      max-width: 900px;
+      margin: 30px auto;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      color: #38bdf8;
+      margin-bottom: 10px;
+    }
+
+    .inputs {
+      margin: 20px 0;
+    }
+
+    input {
+      width: 100px;
+      padding: 6px;
+      text-align: center;
+      border: none;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #000;
+      margin-right: 10px;
+    }
+
+    button {
+      background: #38bdf8;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      color: #0f172a;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .registers {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .register {
+      background: #1e293b;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(56,189,248,0.3);
+      text-align: center;
+    }
+
+    .register h4 {
+      margin: 0;
+      color: #38bdf8;
+    }
+
+    .bits {
+      display: flex;
+      gap: 4px;
+      margin-top: 5px;
+    }
+
+    .bit {
+      width: 24px;
+      height: 24px;
+      background: #334155;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .highlight {
+      background: #0ea5e9 !important;
+      color: #0f172a;
+    }
+
+    .explanation {
+      background: rgba(148,163,184,0.15);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      color: #e2e8f0;
+      font-size: 1.05em;
+      line-height: 1.6;
+    }
+
+    .output {
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 1.1em;
+      color: #f8fafc;
+    }
+
+    .footer-buttons {
+      margin-top: 30px;
+    }
+
+    a.back {
+      display: inline-block;
+      text-decoration: none;
+      color: #38bdf8;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="booth-container">
+    <h2>Booth’s Algorithm – Step-by-Step Visualizer</h2>
+
+    <div class="inputs">
+      <input type="number" id="multiplicand" placeholder="Multiplicand (M)">
+      <input type="number" id="multiplier" placeholder="Multiplier (Q)">
+      <button onclick="startSimulation()">Start</button>
+    </div>
+
+    <div class="registers">
+      <div class="register">
+        <h4>AC</h4>
+        <div id="ac-bits" class="bits"></div>
+      </div>
+      <div class="register">
+        <h4>Q</h4>
+        <div id="q-bits" class="bits"></div>
+      </div>
+      <div class="register">
+        <h4>Q<sub>-1</sub></h4>
+        <div id="q1-bits" class="bits"></div>
+      </div>
+    </div>
+<summary>📘 Theory: Booth’s Multiplication Algorithm</summary>
+<p>
+Booth’s Algorithm performs signed binary multiplication using bit-pair recoding. It efficiently handles both positive and negative operands by observing the pair (Q₀, Q₋₁):
+</p>
+<ol>
+  <li>If Q₀Q₋₁ = 01 → Add multiplicand (M) to AC</li>
+  <li>If Q₀Q₋₁ = 10 → Subtract multiplicand (M) from AC</li>
+  <li>If Q₀Q₋₁ = 00 or 11 → No operation</li>
+  <li>Perform arithmetic right shift on (AC, Q, Q₋₁)</li>
+</ol>
+<p><b>Result:</b> Final product is (AC + Q).</p>
+
+    <div class="explanation" id="explanation">Enter values and click <b>Start</b> to begin.</div>
+
+    <div class="footer-buttons">
+      <button id="next-btn" onclick="nextStep()" disabled>Next Step ▶️</button>
+      <button id="reset-btn" onclick="resetSimulation()" disabled>Reset 🔄</button>
+    </div>
+
+    <div class="output" id="result"></div>
+    <a class="back" href="index.html">🏠 Back to Home</a>
+  </div>
+
+  <script>
+    let steps = [];
+    let currentStep = 0;
+    let n, A, S, Q, Q1, AC;
+
+    function toBinary(num, bits) {
+      if (num < 0) num = (1 << bits) + num;
+      return num.toString(2).padStart(bits, '0');
+    }
+
+    function twosComplement(bin) {
+      let inverted = bin.split('').map(b => b === '0' ? '1' : '0').join('');
+      let addOne = (parseInt(inverted, 2) + 1).toString(2).padStart(bin.length, '0');
+      return addOne.slice(-bin.length);
+    }
+
+    function startSimulation() {
+      const M = parseInt(document.getElementById('multiplicand').value);
+      const Qinit = parseInt(document.getElementById('multiplier').value);
+      if (isNaN(M) || isNaN(Qinit)) {
+        alert("Please enter valid numbers.");
+        return;
+      }
+
+      n = 5;
+      A = toBinary(M, n);
+      S = twosComplement(A);
+      Q = toBinary(Qinit, n);
+      Q1 = '0';
+      AC = '0'.repeat(n);
+
+      steps = [];
+      let tempAC = AC, tempQ = Q, tempQ1 = Q1, count = n;
+
+      while (count > 0) {
+        let lastTwo = tempQ[tempQ.length - 1] + tempQ1;
+        let operation = '', explain = '';
+
+        if (lastTwo === '10') {
+          tempAC = (parseInt(tempAC, 2) + parseInt(S, 2)) & ((1 << n) - 1);
+          tempAC = tempAC.toString(2).padStart(n, '0');
+          operation = 'AC = AC - M';
+          explain = 'Q₀Q₋₁ = 10 → Subtract M from AC';
+        } else if (lastTwo === '01') {
+          tempAC = (parseInt(tempAC, 2) + parseInt(A, 2)) & ((1 << n) - 1);
+          tempAC = tempAC.toString(2).padStart(n, '0');
+          operation = 'AC = AC + M';
+          explain = 'Q₀Q₋₁ = 01 → Add M to AC';
+        } else {
+          operation = 'No Operation';
+          explain = 'Q₀Q₋₁ = 00 or 11 → No change in AC';
+        }
+
+        // Arithmetic right shift
+        let combined = tempAC + tempQ + tempQ1;
+        let msb = combined[0];
+        combined = msb + combined.slice(0, -1);
+        tempAC = combined.slice(0, n);
+        tempQ = combined.slice(n, 2 * n);
+        tempQ1 = combined[2 * n];
+
+        steps.push({ step: n - count + 1, AC: tempAC, Q: tempQ, Q1: tempQ1, operation, explain });
+        count--;
+      }
+
+      currentStep = 0;
+      document.getElementById('next-btn').disabled = false;
+      document.getElementById('reset-btn').disabled = false;
+      updateRegisters(AC, Q, Q1);
+      document.getElementById('explanation').innerHTML = 'Ready! Click <b>Next Step ▶️</b> to proceed.';
+    }
+
+    function nextStep() {
+      if (currentStep >= steps.length) {
+        const final = steps[steps.length - 1];
+        const product = parseInt(final.AC + final.Q, 2);
+        const signedProduct = (final.AC + final.Q)[0] === '1' ? product - (1 << (2 * n)) : product;
+        document.getElementById('result').innerHTML =
+          `<strong>Final Product:</strong> ${signedProduct} (Binary: ${final.AC + final.Q})`;
+        document.getElementById('next-btn').disabled = true;
+        return;
+      }
+
+      let s = steps[currentStep];
+      updateRegisters(s.AC, s.Q, s.Q1);
+      document.getElementById('explanation').innerHTML = 
+        `<b>Step ${s.step}:</b> ${s.explain}<br><i>${s.operation}</i>`;
+      currentStep++;
+    }
+
+    function resetSimulation() {
+      steps = [];
+      currentStep = 0;
+      document.getElementById('explanation').innerHTML = 'Enter values and click <b>Start</b> to begin.';
+      document.getElementById('ac-bits').innerHTML = '';
+      document.getElementById('q-bits').innerHTML = '';
+      document.getElementById('q1-bits').innerHTML = '';
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('next-btn').disabled = true;
+      document.getElementById('reset-btn').disabled = true;
+    }
+
+    function updateRegisters(ac, q, q1) {
+      renderBits('ac-bits', ac);
+      renderBits('q-bits', q);
+      renderBits('q1-bits', q1);
+    }
+
+    function renderBits(id, bits) {
+      const container = document.getElementById(id);
+      container.innerHTML = '';
+      bits.split('').forEach(b => {
+        const div = document.createElement('div');
+        div.classList.add('bit');
+        div.textContent = b;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
