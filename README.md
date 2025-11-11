@@ -1,4 +1,4 @@
-# 🧮 Binary Arithmetic Visualizer  
+# Binary Arithmetic Visualizer  
 ### _An Interactive Web Simulator for Booth’s, Restoring, and Non-Restoring Division Algorithms_
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/binary-arithmetic-visualizer?color=38bdf8)
@@ -21,28 +21,25 @@ Designed to help students understand the **hardware logic** behind multiplicatio
 
 ---
 
-## 🚀 Live Demo
-👉 [**View the Project**](https://yourusername.github.io/binary-arithmetic-visualizer/)  
-_(Replace with your hosted GitHub Pages or Netlify link)_
+## Live Demo
+ [**View the Project**](https://binary-arithmetic-visualiser.vercel.app/)  
 
 ---
 
-## ⚙️ Features
+##  Features
 
 ✅ Step-by-step binary register visualization  
-✅ "Start", "Next Step", "Auto-Run", and "Reset" controls  
-✅ Real-time explanations for every operation  
-✅ Color-coded highlights — 🟩 Add, 🟥 Subtract, 🟨 Shift  
-✅ Collapsible **Theory Section** for each algorithm  
+✅ "Start", "Next Step" and "Reset" controls  
+✅ Real-time explanations for every operation    
 ✅ Modern gradient dark UI with glowing transitions  
 ✅ Sticky navigation bar for seamless switching  
 ✅ 100% offline functionality — pure HTML, CSS, JS  
 
 ---
 
-## 🧠 Algorithms Implemented
+##  Algorithms Implemented
 
-### 🔹 Booth’s Multiplication Algorithm
+###  Booth’s Multiplication Algorithm
 Performs signed binary multiplication efficiently using bit-pair recoding.  
 
 **Logic Table:**
@@ -58,7 +55,7 @@ Final product = `(AC + Q)`
 
 ---
 
-### 🔹 Restoring Division Algorithm
+###  Restoring Division Algorithm
 Performs binary division by restoring the partial remainder when subtraction leads to a negative accumulator.
 
 **Steps:**
@@ -74,7 +71,7 @@ Remainder → AC
 
 ---
 
-### 🔹 Non-Restoring Division Algorithm
+###  Non-Restoring Division Algorithm
 Eliminates the restoration step, improving speed and efficiency.
 
 **Steps:**
@@ -88,7 +85,7 @@ Eliminates the restoration step, improving speed and efficiency.
 
 ---
 
-## 🖥️ Project Structure
+##  Project Structure
 
 binary-arithmetic-visualizer/
 │
@@ -105,7 +102,7 @@ binary-arithmetic-visualizer/
 
 ---
 
-## 🧩 User Interface
+##  User Interface
 ### Key Components
 - **Dark gradient UI** with glowing blue accents  
 - **Register display** for AC, Q, M, and Q-1  
@@ -122,7 +119,7 @@ binary-arithmetic-visualizer/
 
 ---
 
-## 🧮 Sample Output
+##  Sample Output
 
 **Input:**  
 `M = -3`, `Q = 5`
@@ -142,7 +139,7 @@ Remainder = 1
 
 ---
 
-## 💡 Educational Value
+##  Educational Value
 
 This simulator helps students:
 - Visualize internal register transitions in binary arithmetic  
@@ -152,7 +149,7 @@ This simulator helps students:
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |--------|-------------|
@@ -176,9 +173,9 @@ cd binary-arithmetic-visualizer
 # Open in browser
 start index.html
 ```
-✅ No dependencies, no installations required. Just open in any modern browser.
+ No dependencies, no installations required. Just open in any modern browser.
 
-📈 Future Improvements
+ Future Improvements
 
 Add support for custom bit-widths (8-bit, 16-bit, 32-bit)
 
@@ -190,25 +187,16 @@ Add timing diagrams and performance comparisons
 
 Include sound or animation cues for each operation
 
-🧠 Acknowledgements
+ Acknowledgements
 
 NIT Goa – Department of Electronics and Communication Engineering
 
-Faculty of Digital System Design Laboratory
-
 Open-source community for UI design inspiration
 
-🧑‍💻 Developer
-
-Your Name
+ Developer
+Aryan Satyendra Kumar
 B.Tech, Electronics and Communication Engineering
 National Institute of Technology Goa
-
-📧 Email: [your.email@example.com
-]
-🌐 GitHub: github.com/yourusername
-
-🔗 LinkedIn: linkedin.com/in/yourprofile
 
 🪪 License
 
