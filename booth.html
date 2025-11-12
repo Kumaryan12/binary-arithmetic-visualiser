@@ -5,50 +5,63 @@
   <title>Booth’s Algorithm Visualizer</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Extra styling for this page */
+    body {
+      background: radial-gradient(circle at 20% 20%, #0f172a, #1e293b);
+      color: #f8fafc;
+      font-family: 'Poppins', sans-serif;
+    }
+
     .booth-container {
       background: rgba(30, 41, 59, 0.9);
       padding: 25px;
       border-radius: 16px;
       width: 85%;
-      max-width: 900px;
+      max-width: 1100px;
       margin: 30px auto;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
 
     h2 {
       color: #38bdf8;
+      text-align: center;
       margin-bottom: 10px;
+      font-size: 1.8em;
     }
 
     .inputs {
+      text-align: center;
       margin: 20px 0;
     }
 
     input {
-      width: 100px;
-      padding: 6px;
+      width: 120px;
+      padding: 8px;
       text-align: center;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       background: #f1f5f9;
       color: #000;
       margin-right: 10px;
+      font-weight: 600;
     }
 
     button {
-      background: #38bdf8;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       border: none;
-      padding: 8px 18px;
+      padding: 10px 20px;
       border-radius: 8px;
       color: #0f172a;
       font-weight: 600;
       cursor: pointer;
       margin: 6px;
+      box-shadow: 0 0 10px rgba(56,189,248,0.4);
+      transition: 0.3s;
     }
 
     button:hover {
       background: #0ea5e9;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(56,189,248,0.6);
     }
 
     .registers {
@@ -63,24 +76,25 @@
       background: #1e293b;
       padding: 10px 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(56,189,248,0.3);
+      box-shadow: 0 0 12px rgba(56,189,248,0.3);
       text-align: center;
+      min-width: 150px;
     }
 
     .register h4 {
-      margin: 0;
       color: #38bdf8;
     }
 
     .bits {
       display: flex;
       gap: 4px;
-      margin-top: 5px;
+      justify-content: center;
+      margin-top: 6px;
     }
 
     .bit {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       background: #334155;
       color: #f8fafc;
       display: flex;
@@ -88,6 +102,7 @@
       justify-content: center;
       border-radius: 4px;
       font-weight: bold;
+      font-size: 0.9em;
     }
 
     .highlight {
@@ -95,33 +110,77 @@
       color: #0f172a;
     }
 
-    .explanation {
-      background: rgba(148,163,184,0.15);
+    summary {
+      color: #38bdf8;
+      font-size: 1.1em;
+      margin-top: 25px;
+      cursor: pointer;
+    }
+
+    details {
+      background: rgba(148,163,184,0.1);
       padding: 12px;
       border-radius: 8px;
-      margin-top: 20px;
+      margin-top: 10px;
       color: #e2e8f0;
-      font-size: 1.05em;
       line-height: 1.6;
     }
 
+    .explanation {
+      background: rgba(148,163,184,0.15);
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 25px;
+      font-size: 1.05em;
+    }
+
+    .step-log {
+      margin-top: 25px;
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 10px;
+      padding: 15px;
+      height: 220px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(56,189,248,0.1);
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      border-left: 3px solid #38bdf8;
+      padding-left: 8px;
+      font-size: 0.95em;
+      line-height: 1.4;
+    }
+
+    .log-entry b {
+      color: #38bdf8;
+    }
+
     .output {
-      margin-top: 20px;
+      margin-top: 25px;
       font-weight: 600;
-      font-size: 1.1em;
+      text-align: center;
+      font-size: 1.15em;
       color: #f8fafc;
     }
 
     .footer-buttons {
-      margin-top: 30px;
+      text-align: center;
+      margin-top: 25px;
     }
 
     a.back {
-      display: inline-block;
+      display: block;
+      text-align: center;
       text-decoration: none;
       color: #38bdf8;
       font-weight: 600;
       margin-top: 20px;
+    }
+
+    a.back:hover {
+      color: #0ea5e9;
     }
   </style>
 </head>
@@ -150,19 +209,27 @@
         <div id="q1-bits" class="bits"></div>
       </div>
     </div>
-<summary>📘 Theory: Booth’s Multiplication Algorithm</summary>
-<p>
-Booth’s Algorithm performs signed binary multiplication using bit-pair recoding. It efficiently handles both positive and negative operands by observing the pair (Q₀, Q₋₁):
-</p>
-<ol>
-  <li>If Q₀Q₋₁ = 01 → Add multiplicand (M) to AC</li>
-  <li>If Q₀Q₋₁ = 10 → Subtract multiplicand (M) from AC</li>
-  <li>If Q₀Q₋₁ = 00 or 11 → No operation</li>
-  <li>Perform arithmetic right shift on (AC, Q, Q₋₁)</li>
-</ol>
-<p><b>Result:</b> Final product is (AC + Q).</p>
+
+    <details>
+      <summary>📘 Theory: Booth’s Multiplication Algorithm</summary>
+      <p>
+        Booth’s Algorithm performs signed binary multiplication using bit-pair recoding. It efficiently handles both positive and negative operands by observing the pair (Q₀, Q₋₁):
+      </p>
+      <ol>
+        <li>If Q₀Q₋₁ = 01 → Add multiplicand (M) to AC</li>
+        <li>If Q₀Q₋₁ = 10 → Subtract multiplicand (M) from AC</li>
+        <li>If Q₀Q₋₁ = 00 or 11 → No operation</li>
+        <li>Perform arithmetic right shift on (AC, Q, Q₋₁)</li>
+      </ol>
+      <p><b>Result:</b> Final product is (AC + Q).</p>
+    </details>
 
     <div class="explanation" id="explanation">Enter values and click <b>Start</b> to begin.</div>
+
+    <!-- NEW: Step Log -->
+    <div class="step-log" id="step-log">
+      <p><i>Step log will appear here...</i></p>
+    </div>
 
     <div class="footer-buttons">
       <button id="next-btn" onclick="nextStep()" disabled>Next Step ▶️</button>
@@ -226,7 +293,6 @@ Booth’s Algorithm performs signed binary multiplication using bit-pair recodin
           explain = 'Q₀Q₋₁ = 00 or 11 → No change in AC';
         }
 
-        // Arithmetic right shift
         let combined = tempAC + tempQ + tempQ1;
         let msb = combined[0];
         combined = msb + combined.slice(0, -1);
@@ -243,6 +309,7 @@ Booth’s Algorithm performs signed binary multiplication using bit-pair recodin
       document.getElementById('reset-btn').disabled = false;
       updateRegisters(AC, Q, Q1);
       document.getElementById('explanation').innerHTML = 'Ready! Click <b>Next Step ▶️</b> to proceed.';
+      document.getElementById('step-log').innerHTML = '<i>Simulation initialized...</i>';
     }
 
     function nextStep() {
@@ -253,13 +320,15 @@ Booth’s Algorithm performs signed binary multiplication using bit-pair recodin
         document.getElementById('result').innerHTML =
           `<strong>Final Product:</strong> ${signedProduct} (Binary: ${final.AC + final.Q})`;
         document.getElementById('next-btn').disabled = true;
+        addLog(`✅ Final Product = ${signedProduct} (Binary: ${final.AC + final.Q})`);
         return;
       }
 
       let s = steps[currentStep];
       updateRegisters(s.AC, s.Q, s.Q1);
-      document.getElementById('explanation').innerHTML = 
+      document.getElementById('explanation').innerHTML =
         `<b>Step ${s.step}:</b> ${s.explain}<br><i>${s.operation}</i>`;
+      addLog(`Step ${s.step}: AC=${s.AC}, Q=${s.Q}, Q₋₁=${s.Q1} → ${s.operation}`);
       currentStep++;
     }
 
@@ -271,6 +340,7 @@ Booth’s Algorithm performs signed binary multiplication using bit-pair recodin
       document.getElementById('q-bits').innerHTML = '';
       document.getElementById('q1-bits').innerHTML = '';
       document.getElementById('result').innerHTML = '';
+      document.getElementById('step-log').innerHTML = '<i>Step log cleared.</i>';
       document.getElementById('next-btn').disabled = true;
       document.getElementById('reset-btn').disabled = true;
     }
@@ -290,6 +360,15 @@ Booth’s Algorithm performs signed binary multiplication using bit-pair recodin
         div.textContent = b;
         container.appendChild(div);
       });
+    }
+
+    function addLog(text) {
+      const log = document.getElementById('step-log');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = text;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
     }
   </script>
 </body>

@@ -5,49 +5,63 @@
   <title>Restoring Division Visualizer</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
+    body {
+      background: radial-gradient(circle at 20% 20%, #0f172a, #1e293b);
+      color: #f8fafc;
+      font-family: 'Poppins', sans-serif;
+    }
+
     .division-container {
       background: rgba(30, 41, 59, 0.9);
       padding: 25px;
       border-radius: 16px;
       width: 85%;
-      max-width: 900px;
+      max-width: 1100px;
       margin: 30px auto;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
 
     h2 {
       color: #38bdf8;
-      margin-bottom: 10px;
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 15px;
     }
 
     .inputs {
+      text-align: center;
       margin: 20px 0;
     }
 
     input {
-      width: 100px;
-      padding: 6px;
+      width: 120px;
+      padding: 8px;
       text-align: center;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       background: #f1f5f9;
       color: #000;
       margin-right: 10px;
+      font-weight: 600;
     }
 
     button {
-      background: #38bdf8;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       border: none;
-      padding: 8px 18px;
+      padding: 10px 20px;
       border-radius: 8px;
       color: #0f172a;
       font-weight: 600;
       cursor: pointer;
       margin: 6px;
+      box-shadow: 0 0 10px rgba(56,189,248,0.4);
+      transition: 0.3s;
     }
 
     button:hover {
       background: #0ea5e9;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(56,189,248,0.6);
     }
 
     .registers {
@@ -62,24 +76,25 @@
       background: #1e293b;
       padding: 10px 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(56,189,248,0.3);
       text-align: center;
+      box-shadow: 0 0 12px rgba(56,189,248,0.3);
+      min-width: 150px;
     }
 
     .register h4 {
-      margin: 0;
       color: #38bdf8;
     }
 
     .bits {
       display: flex;
       gap: 4px;
-      margin-top: 5px;
+      justify-content: center;
+      margin-top: 6px;
     }
 
     .bit {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       background: #334155;
       color: #f8fafc;
       display: flex;
@@ -87,46 +102,84 @@
       justify-content: center;
       border-radius: 4px;
       font-weight: bold;
-    }
-
-    .highlight {
-      background: #0ea5e9 !important;
-      color: #0f172a;
+      font-size: 0.9em;
     }
 
     .explanation {
       background: rgba(148,163,184,0.15);
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 20px;
-      color: #e2e8f0;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 25px;
       font-size: 1.05em;
-      line-height: 1.6;
+    }
+
+    .step-log {
+      margin-top: 25px;
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 10px;
+      padding: 15px;
+      height: 220px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(56,189,248,0.1);
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      border-left: 3px solid #38bdf8;
+      padding-left: 8px;
+      font-size: 0.95em;
+      line-height: 1.4;
+    }
+
+    .log-entry b {
+      color: #38bdf8;
     }
 
     .output {
-      margin-top: 20px;
+      margin-top: 25px;
       font-weight: 600;
-      font-size: 1.1em;
+      text-align: center;
+      font-size: 1.15em;
       color: #f8fafc;
     }
 
     .footer-buttons {
-      margin-top: 30px;
+      text-align: center;
+      margin-top: 25px;
     }
 
     a.back {
-      display: inline-block;
+      display: block;
+      text-align: center;
       text-decoration: none;
       color: #38bdf8;
       font-weight: 600;
       margin-top: 20px;
     }
+
+    a.back:hover {
+      color: #0ea5e9;
+    }
+
+    summary {
+      color: #38bdf8;
+      font-size: 1.1em;
+      margin-top: 25px;
+      cursor: pointer;
+    }
+
+    details {
+      background: rgba(148,163,184,0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
-  <!-- NAVIGATION BAR -->
-
 
   <div class="division-container">
     <h2>Restoring Division Algorithm – Step-by-Step Visualizer</h2>
@@ -151,20 +204,28 @@
         <div id="m-bits" class="bits"></div>
       </div>
     </div>
-<summary>📘 Theory: Restoring Division Algorithm</summary>
-<p>
-The Restoring Division Algorithm performs binary division by restoring the value of AC whenever the subtraction result becomes negative.
-</p>
-<ol>
-  <li>Shift left (AC, Q).</li>
-  <li>Subtract divisor (M) from AC.</li>
-  <li>If AC &lt; 0 → Restore AC (add back M) and set Q₀ = 0.</li>
-  <li>Else → Keep AC and set Q₀ = 1.</li>
-  <li>Repeat for all bits of Q.</li>
-</ol>
-<p><b>Result:</b> Quotient is stored in Q, remainder in AC.</p>
+
+    <details>
+      <summary>📘 Theory: Restoring Division Algorithm</summary>
+      <p>
+        Restoring Division performs binary division by restoring AC whenever subtraction results in a negative value.
+      </p>
+      <ol>
+        <li>Shift left (AC, Q).</li>
+        <li>Subtract divisor (M) from AC.</li>
+        <li>If AC &lt; 0 → Restore AC (add M), set Q₀ = 0.</li>
+        <li>Else → Keep AC, set Q₀ = 1.</li>
+        <li>Repeat for all bits of Q.</li>
+      </ol>
+      <p><b>Result:</b> Quotient = Q, Remainder = AC</p>
+    </details>
 
     <div class="explanation" id="explanation">Enter values and click <b>Start</b> to begin.</div>
+
+    <!-- Step Log Panel -->
+    <div class="step-log" id="step-log">
+      <p><i>Step log will appear here...</i></p>
+    </div>
 
     <div class="footer-buttons">
       <button id="next-btn" onclick="nextStep()" disabled>Next Step ▶️</button>
@@ -185,12 +246,6 @@ The Restoring Division Algorithm performs binary division by restoring the value
       return num.toString(2).padStart(bits, '0');
     }
 
-    function twosComplement(bin) {
-      let inverted = bin.split('').map(b => b === '0' ? '1' : '0').join('');
-      let addOne = (parseInt(inverted, 2) + 1).toString(2).padStart(bin.length, '0');
-      return addOne.slice(-bin.length);
-    }
-
     function startRestoring() {
       const dividend = parseInt(document.getElementById('dividend').value);
       const divisor = parseInt(document.getElementById('divisor').value);
@@ -208,38 +263,27 @@ The Restoring Division Algorithm performs binary division by restoring the value
       let tempAC = AC, tempQ = Q, count = n;
 
       while (count > 0) {
-        // Step 1: Shift left (AC,Q)
         let combined = (tempAC + tempQ).slice(1) + '0';
         tempAC = combined.slice(0, n);
         tempQ = combined.slice(n, 2 * n);
 
-        // Step 2: AC = AC - M
-        let tempACdec = (parseInt(tempAC, 2) - parseInt(M, 2));
-        let explain = `Shift left (AC,Q). Subtract M from AC. `;
+        let tempACdec = parseInt(tempAC, 2) - parseInt(M, 2);
         let operation = 'AC = AC - M';
+        let explain = 'Shift left (AC,Q). Subtract M from AC. ';
 
         if (tempACdec < 0) {
-          // Step 3: Restore AC and set Q0 = 0
-          tempACdec = tempACdec + (1 << n);
+          tempACdec += parseInt(M, 2);
           tempQ = tempQ.slice(0, -1) + '0';
-          explain += `AC < 0 → Restore AC and set Q₀ = 0.`;
+          explain += 'AC < 0 → Restore AC, set Q₀ = 0.';
           operation += ' → Restored';
         } else {
-          // Step 4: Keep AC and set Q0 = 1
           tempQ = tempQ.slice(0, -1) + '1';
-          explain += `AC ≥ 0 → Keep AC and set Q₀ = 1.`;
+          explain += 'AC ≥ 0 → Keep AC, set Q₀ = 1.';
         }
 
         tempAC = (tempACdec & ((1 << n) - 1)).toString(2).padStart(n, '0');
 
-        steps.push({
-          step: n - count + 1,
-          AC: tempAC,
-          Q: tempQ,
-          operation,
-          explain
-        });
-
+        steps.push({ step: n - count + 1, AC: tempAC, Q: tempQ, operation, explain });
         count--;
       }
 
@@ -248,6 +292,7 @@ The Restoring Division Algorithm performs binary division by restoring the value
       document.getElementById('reset-btn').disabled = false;
       updateRegisters(AC, Q, M);
       document.getElementById('explanation').innerHTML = 'Ready! Click <b>Next Step ▶️</b> to proceed.';
+      document.getElementById('step-log').innerHTML = '<i>Simulation initialized...</i>';
     }
 
     function nextStep() {
@@ -259,6 +304,7 @@ The Restoring Division Algorithm performs binary division by restoring the value
           `<strong>Quotient:</strong> ${quotient} (Binary: ${final.Q})<br>
            <strong>Remainder:</strong> ${remainder} (Binary: ${final.AC})`;
         document.getElementById('next-btn').disabled = true;
+        addLog(`✅ Final Result → Quotient=${quotient}, Remainder=${remainder}`);
         return;
       }
 
@@ -266,6 +312,7 @@ The Restoring Division Algorithm performs binary division by restoring the value
       updateRegisters(s.AC, s.Q, M);
       document.getElementById('explanation').innerHTML =
         `<b>Step ${s.step}:</b> ${s.explain}<br><i>${s.operation}</i>`;
+      addLog(`Step ${s.step}: AC=${s.AC}, Q=${s.Q} → ${s.operation}`);
       currentStep++;
     }
 
@@ -277,6 +324,7 @@ The Restoring Division Algorithm performs binary division by restoring the value
       document.getElementById('q-bits').innerHTML = '';
       document.getElementById('m-bits').innerHTML = '';
       document.getElementById('result').innerHTML = '';
+      document.getElementById('step-log').innerHTML = '<i>Step log cleared.</i>';
       document.getElementById('next-btn').disabled = true;
       document.getElementById('reset-btn').disabled = true;
     }
@@ -296,6 +344,15 @@ The Restoring Division Algorithm performs binary division by restoring the value
         div.textContent = b;
         container.appendChild(div);
       });
+    }
+
+    function addLog(text) {
+      const log = document.getElementById('step-log');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = text;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
     }
   </script>
 </body>

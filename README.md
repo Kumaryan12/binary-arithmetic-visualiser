@@ -165,7 +165,7 @@ This simulator helps students:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/binary-arithmetic-visualizer.git
+git clone https://github.com/Kumaryan12/binary-arithmetic-visualizer.git
 
 # Move into project folder
 cd binary-arithmetic-visualizer
@@ -197,6 +197,14 @@ Open-source community for UI design inspiration
 Aryan Satyendra Kumar
 B.Tech, Electronics and Communication Engineering
 National Institute of Technology Goa
+
+=======
+📧 Email: [kumararyan66472@gmail.com
+]
+🌐 GitHub: github.com/Kumaryan12
+
+🔗 LinkedIn: linkedin.com/in/kumaryan12
+
 
 🪪 License
 
